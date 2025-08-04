@@ -11,8 +11,17 @@ const isSupabaseConfigured = supabaseUrl !== 'https://your-project.supabase.co' 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export class SupabaseService {
+  // Verificar se o Supabase está configurado
+  static isConfigured(): boolean {
+    return isSupabaseConfigured;
+  }
+
   // Salvar todas as unidades
   static async saveUnits(units: AcademyUnit[]): Promise<void> {
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase não está configurado. Verifique as variáveis de ambiente VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY');
+    }
+
     try {
       // Primeiro, deletar todas as unidades existentes
       await supabase.from('units').delete().neq('id', '');
