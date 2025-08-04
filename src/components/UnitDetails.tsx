@@ -411,7 +411,8 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
                     <div className="relative">
                       <button
                         onClick={() => toggleMenu(equipment.id)}
-                        className="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-all duration-200"
+                        className="opacity-60 group-hover:opacity-100 p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all duration-200 md:opacity-0 md:group-hover:opacity-100"
+                        title="Ações do equipamento"
                       >
                         <MoreVertical className="w-4 h-4" />
                       </button>
