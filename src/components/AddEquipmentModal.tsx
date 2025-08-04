@@ -124,11 +124,22 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              onChange={(e) => {
+                setFormData({...formData, name: e.target.value});
+                if (errors.name) setErrors({...errors, name: ''});
+              }}
+              className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 transition-colors ${
+                errors.name
+                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+              }`}
               placeholder="Ex: Câmera IP Hikvision"
+              disabled={isSubmitting}
               required
             />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div>
