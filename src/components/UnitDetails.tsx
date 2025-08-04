@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Mail, Phone, User, UserCheck, Clock, Zap, AlertTriangle, Wrench, Plus, Wifi } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, User, UserCheck, Clock, Zap, AlertTriangle, Wrench, Plus, Wifi, Trash2, Edit3, MoreVertical } from 'lucide-react';
 import Chart from 'chart.js/auto';
 import { AcademyUnit, Equipment } from '../types/academy';
 import { AddEquipmentModal } from './AddEquipmentModal';
+import { EditEquipmentModal } from './EditEquipmentModal';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface UnitDetailsProps {
   unit: AcademyUnit;
@@ -12,6 +14,11 @@ interface UnitDetailsProps {
 
 export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [equipmentToDelete, setEquipmentToDelete] = useState<string | null>(null);
+  const [equipmentToEdit, setEquipmentToEdit] = useState<Equipment | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const categoryChart = useRef<HTMLCanvasElement>(null);
   const statusChart = useRef<HTMLCanvasElement>(null);
   const chartInstances = useRef<Chart[]>([]);
@@ -31,14 +38,67 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
       ...equipmentData,
       id: `eq-${Date.now()}`
     };
-    
+
     const updatedUnit = {
       ...unit,
       equipment: [...unit.equipment, newEquipment]
     };
-    
+
     onUpdateUnit(updatedUnit);
   };
+
+  const handleDeleteEquipment = (equipmentId: string) => {
+    setEquipmentToDelete(equipmentId);
+    setShowDeleteConfirm(true);
+    setOpenMenuId(null);
+  };
+
+  const confirmDeleteEquipment = () => {
+    if (equipmentToDelete) {
+      const updatedUnit = {
+        ...unit,
+        equipment: unit.equipment.filter(eq => eq.id !== equipmentToDelete)
+      };
+      onUpdateUnit(updatedUnit);
+      setEquipmentToDelete(null);
+    }
+  };
+
+  const handleEditEquipment = (equipmentId: string) => {
+    const equipment = unit.equipment.find(eq => eq.id === equipmentId);
+    if (equipment) {
+      setEquipmentToEdit(equipment);
+      setShowEditModal(true);
+    }
+    setOpenMenuId(null);
+  };
+
+  const handleUpdateEquipment = (updatedEquipment: Equipment) => {
+    const updatedUnit = {
+      ...unit,
+      equipment: unit.equipment.map(eq =>
+        eq.id === updatedEquipment.id ? updatedEquipment : eq
+      )
+    };
+    onUpdateUnit(updatedUnit);
+    setEquipmentToEdit(null);
+  };
+
+  const toggleMenu = (equipmentId: string) => {
+    setOpenMenuId(openMenuId === equipmentId ? null : equipmentId);
+  };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openMenuId && !(event.target as Element).closest('.equipment-menu')) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openMenuId]);
 
   useEffect(() => {
     // Cleanup previous charts
@@ -317,11 +377,11 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
         ) : (
           <div className="divide-y divide-slate-200">
             {unit.equipment.map((equipment) => (
-              <div key={equipment.id} className="p-6 hover:bg-slate-50 transition-colors">
+              <div key={equipment.id} className="p-6 hover:bg-slate-50 transition-colors group">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className={`w-3 h-3 rounded-full ${
-                      equipment.status === 'working' ? 'bg-green-400' : 
+                      equipment.status === 'working' ? 'bg-green-400' :
                       equipment.status === 'maintenance' ? 'bg-yellow-400' : 'bg-red-400'
                     }`}></div>
                     <div>
@@ -335,17 +395,66 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
                       )}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900">
-                      {equipment.status === 'working' ? 'Funcionando' :
-                       equipment.status === 'maintenance' ? 'Em Manutenção' : 'Fora de Serviço'}
-                    </p>
-                    {equipment.lastMaintenance && (
-                      <p className="text-xs text-slate-500 flex items-center space-x-1">
-                        <Clock className="w-3 h-3" />
-                        <span>Última verificação: {equipment.lastMaintenance}</span>
+                  <div className="flex items-center space-x-4">
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-slate-900">
+                        {equipment.status === 'working' ? 'Funcionando' :
+                         equipment.status === 'maintenance' ? 'Em Manutenção' : 'Fora de Serviço'}
                       </p>
-                    )}
+                      {equipment.lastMaintenance && (
+                        <p className="text-xs text-slate-500 flex items-center space-x-1">
+                          <Clock className="w-3 h-3" />
+                          <span>Última verificação: {equipment.lastMaintenance}</span>
+                        </p>
+                      )}
+                    </div>
+                    {/* Botões de ação para mobile */}
+                    <div className="flex items-center space-x-2 md:hidden">
+                      <button
+                        onClick={() => handleEditEquipment(equipment.id)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Editar equipamento"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteEquipment(equipment.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Excluir equipamento"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {/* Menu dropdown para desktop */}
+                    <div className="relative hidden md:block">
+                      <button
+                        onClick={() => toggleMenu(equipment.id)}
+                        className="opacity-60 group-hover:opacity-100 p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all duration-200 md:opacity-0 md:group-hover:opacity-100"
+                        title="Ações do equipamento"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                      {openMenuId === equipment.id && (
+                        <div className="equipment-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-200 z-10">
+                          <div className="p-1">
+                            <button
+                              onClick={() => handleEditEquipment(equipment.id)}
+                              className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded flex items-center space-x-2"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                              <span>Editar Equipamento</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEquipment(equipment.id)}
+                              className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded flex items-center space-x-2"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              <span>Excluir Equipamento</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -358,6 +467,30 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         onAdd={handleAddEquipment}
+      />
+
+      <EditEquipmentModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEquipmentToEdit(null);
+        }}
+        onUpdate={handleUpdateEquipment}
+        equipment={equipmentToEdit}
+      />
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setEquipmentToDelete(null);
+        }}
+        onConfirm={confirmDeleteEquipment}
+        title="Excluir Equipamento"
+        message="Tem certeza de que deseja excluir este equipamento? Esta ação não pode ser desfeita."
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        type="danger"
       />
     </div>
   );

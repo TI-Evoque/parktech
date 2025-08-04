@@ -2,14 +2,26 @@ import { createClient } from '@supabase/supabase-js';
 import { AcademyUnit } from '../types/academy';
 
 // Configuração do Supabase
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://your-project.supabase.co';
-const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'your-anon-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+
+// Verificar se as credenciais estão configuradas
+const isSupabaseConfigured = supabaseUrl !== 'https://your-project.supabase.co' && supabaseKey !== 'your-anon-key';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export class SupabaseService {
+  // Verificar se o Supabase está configurado
+  static isConfigured(): boolean {
+    return isSupabaseConfigured;
+  }
+
   // Salvar todas as unidades
   static async saveUnits(units: AcademyUnit[]): Promise<void> {
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase não está configurado. Verifique as variáveis de ambiente VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY');
+    }
+
     try {
       // Primeiro, deletar todas as unidades existentes
       await supabase.from('units').delete().neq('id', '');
