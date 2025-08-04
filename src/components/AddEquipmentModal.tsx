@@ -148,8 +148,16 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
             </label>
             <select
               value={formData.category}
-              onChange={(e) => setFormData({...formData, category: e.target.value})}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              onChange={(e) => {
+                setFormData({...formData, category: e.target.value});
+                if (errors.category) setErrors({...errors, category: ''});
+              }}
+              className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 transition-colors ${
+                errors.category
+                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+              }`}
+              disabled={isSubmitting}
               required
             >
               <option value="">Selecionar categoria</option>
