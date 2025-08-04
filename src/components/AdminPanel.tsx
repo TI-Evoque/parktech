@@ -19,6 +19,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
   const [backups, setBackups] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
   
   const [newUnitForm, setNewUnitForm] = useState({
     name: '',
