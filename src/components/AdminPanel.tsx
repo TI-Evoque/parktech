@@ -230,7 +230,8 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
   }, [activeTab]);
 
   return (
-    <div className="space-y-6">
+    <>
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <button
@@ -713,6 +714,9 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
+    </>
   );
 }
