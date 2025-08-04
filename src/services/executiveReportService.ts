@@ -9,7 +9,7 @@ declare module 'jspdf' {
 }
 
 export class ExecutiveReportService {
-  // Relatório Executivo para CEO
+  // Relat��rio Executivo para CEO
   static generateExecutiveReportPDF(units: AcademyUnit[]): void {
     const doc = new jsPDF();
     
@@ -20,7 +20,7 @@ export class ExecutiveReportService {
     
     doc.setFontSize(16);
     doc.setTextColor(102, 102, 102);
-    doc.text('Academia Evoque - Análise de Equipamentos', 20, 35);
+    doc.text('Evoque Academias - Análise de Equipamentos', 20, 35);
     
     doc.setFontSize(12);
     doc.setTextColor(136, 136, 136);
