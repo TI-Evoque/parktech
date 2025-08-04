@@ -408,7 +408,25 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
                         </p>
                       )}
                     </div>
-                    <div className="relative">
+                    {/* Botões de ação para mobile */}
+                    <div className="flex items-center space-x-2 md:hidden">
+                      <button
+                        onClick={() => handleEditEquipment(equipment.id)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Editar equipamento"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteEquipment(equipment.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Excluir equipamento"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {/* Menu dropdown para desktop */}
+                    <div className="relative hidden md:block">
                       <button
                         onClick={() => toggleMenu(equipment.id)}
                         className="opacity-60 group-hover:opacity-100 p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all duration-200 md:opacity-0 md:group-hover:opacity-100"
