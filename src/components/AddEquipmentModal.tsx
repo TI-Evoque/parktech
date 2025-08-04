@@ -239,20 +239,31 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
             />
           </div>
 
-          <div className="flex space-x-3 pt-4">
+          <div className="flex space-x-3 pt-6 border-t border-gray-200">
             <button
               type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              onClick={handleClose}
+              disabled={isSubmitting}
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 flex items-center justify-center space-x-2"
+              disabled={isSubmitting}
+              className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:bg-orange-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 font-medium"
             >
-              <Plus className="w-4 h-4" />
-              <span>Adicionar</span>
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Adicionando...</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  <span>Adicionar</span>
+                </>
+              )}
             </button>
           </div>
         </form>
