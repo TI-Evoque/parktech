@@ -209,10 +209,21 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
             <input
               type="text"
               value={formData.serialNumber}
-              onChange={(e) => setFormData({...formData, serialNumber: e.target.value})}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              onChange={(e) => {
+                setFormData({...formData, serialNumber: e.target.value});
+                if (errors.serialNumber) setErrors({...errors, serialNumber: ''});
+              }}
+              className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 transition-colors ${
+                errors.serialNumber
+                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+              }`}
               placeholder="Ex: HK003344"
+              disabled={isSubmitting}
             />
+            {errors.serialNumber && (
+              <p className="text-red-500 text-xs mt-1">{errors.serialNumber}</p>
+            )}
           </div>
 
           <div>
