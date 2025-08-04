@@ -11,9 +11,14 @@ export interface Equipment {
 export interface AcademyUnit {
   id: string;
   name: string;
-  location: string;
+  email: string;
+  manufacturer: string;
   status: 'online' | 'offline';
   equipment: Equipment[];
   manager?: string;
-  phone?: string;
+  managerPhone?: string;
+  coordinator?: string;
+  coordinatorPhone?: string;
+  regional?: string;
+  internetPlan?: string;
 }
