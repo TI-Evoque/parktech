@@ -167,6 +167,9 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
                 </option>
               ))}
             </select>
+            {errors.category && (
+              <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+            )}
           </div>
 
           <div>
