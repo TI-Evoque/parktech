@@ -147,7 +147,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       await loadBackups();
     } catch (error) {
       console.error('Erro ao criar backup:', error);
-      alert('Erro ao criar backup. Verifique a conexão.');
+      toast.error('Erro ao criar backup', 'Verifique a conexão com o Supabase');
     }
     setIsLoading(false);
   };
