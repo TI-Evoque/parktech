@@ -214,7 +214,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       if (isConnected) {
         toast.success('Conexão estabelecida!', 'Supabase conectado com sucesso');
       } else {
-        alert('⚠️ Tabelas não encontradas. Execute o SQL de configuração no Supabase.');
+        toast.warning('Tabelas não encontradas', 'Execute o SQL de configuração no Supabase');
       }
     } catch (error) {
       console.error('Erro ao testar conexão:', error);
