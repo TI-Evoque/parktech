@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, Edit, Trash2, Save, X, Download, Upload, FileText, Dat
 import { AcademyUnit } from '../types/academy';
 import { ReportService } from '../services/reportService';
 import { SupabaseService } from '../services/supabase';
+import { useToast, ToastContainer } from './Toast';
 
 interface AdminPanelProps {
   units: AcademyUnit[];
@@ -18,6 +19,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
   const [backups, setBackups] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
   
   const [newUnitForm, setNewUnitForm] = useState({
     name: '',
@@ -139,13 +141,13 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       
       // Backup no Supabase
       await SupabaseService.createBackup();
-      alert('Backup criado com sucesso!');
+      toast.success('Backup criado com sucesso!', 'O backup foi salvo no Supabase');
       
       // Atualizar lista de backups
       await loadBackups();
     } catch (error) {
       console.error('Erro ao criar backup:', error);
-      alert('Erro ao criar backup. Verifique a conexão.');
+      toast.error('Erro ao criar backup', 'Verifique a conexão com o Supabase');
     }
     setIsLoading(false);
   };
@@ -165,7 +167,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       try {
         const restoredData = await SupabaseService.restoreBackup(backupId);
         onUpdateUnits(restoredData);
-        alert('Backup restaurado com sucesso!');
+        toast.success('Backup restaurado com sucesso!', 'Todos os dados foram atualizados');
       } catch (error) {
         console.error('Erro ao restaurar backup:', error);
         alert('Erro ao restaurar backup.');
@@ -180,22 +182,27 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       try {
         const importedData = await ReportService.importBackupJSON(file);
         onUpdateUnits(importedData);
-        alert('Backup importado com sucesso!');
+        toast.success('Backup importado com sucesso!', 'Dados carregados do arquivo');
       } catch (error) {
         console.error('Erro ao importar backup:', error);
-        alert('Erro ao importar backup. Verifique o formato do arquivo.');
+        toast.error('Erro ao importar backup', 'Verifique o formato do arquivo JSON');
       }
     }
   };
 
   const handleSyncToSupabase = async () => {
+    if (!SupabaseService.isConfigured()) {
+      toast.warning('Supabase não configurado', 'Adicione as variáveis VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no arquivo .env');
+      return;
+    }
+
     setIsLoading(true);
     try {
       await SupabaseService.saveUnits(units);
-      alert('Dados sincronizados com o Supabase com sucesso!');
+      toast.success('Sincronização completa!', 'Dados enviados para o Supabase com sucesso');
     } catch (error) {
       console.error('Erro ao sincronizar:', error);
-      alert('Erro ao sincronizar com Supabase. Verifique a configuração.');
+      toast.error('Erro na sincronização', 'Verifique a configuração do Supabase');
     }
     setIsLoading(false);
   };
@@ -205,13 +212,13 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
     try {
       const isConnected = await SupabaseService.testConnection();
       if (isConnected) {
-        alert('✓ Conexão com Supabase estabelecida com sucesso!');
+        toast.success('Conexão estabelecida!', 'Supabase conectado com sucesso');
       } else {
-        alert('⚠️ Tabelas não encontradas. Execute o SQL de configuração no Supabase.');
+        toast.warning('Tabelas não encontradas', 'Execute o SQL de configuração no Supabase');
       }
     } catch (error) {
       console.error('Erro ao testar conexão:', error);
-      alert('❌ Erro de conexão. Verifique as credenciais do Supabase.');
+      toast.error('Erro de conexão', 'Verifique as credenciais do Supabase');
     }
     setIsLoading(false);
   };
@@ -223,7 +230,8 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
   }, [activeTab]);
 
   return (
-    <div className="space-y-6">
+    <>
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <button
@@ -706,6 +714,9 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
+    </>
   );
 }

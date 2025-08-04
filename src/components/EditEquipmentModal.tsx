@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { X, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Edit3 } from 'lucide-react';
 import { Equipment } from '../types/academy';
 
-interface AddEquipmentModalProps {
+interface EditEquipmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (equipment: Omit<Equipment, 'id'>) => void;
+  onUpdate: (equipment: Equipment) => void;
+  equipment: Equipment | null;
 }
 
-export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalProps) {
+export function EditEquipmentModal({ isOpen, onClose, onUpdate, equipment }: EditEquipmentModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -31,57 +32,68 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
     'Energia',
     'Periféricos',
     'Software',
+    'Catracas',
+    'Controle de Acesso',
     'Outros'
   ];
 
+  useEffect(() => {
+    if (equipment && isOpen) {
+      setFormData({
+        name: equipment.name || '',
+        category: equipment.category || '',
+        status: equipment.status || 'working',
+        lastMaintenance: equipment.lastMaintenance || '',
+        model: equipment.model || '',
+        serialNumber: equipment.serialNumber || ''
+      });
+      setErrors({});
+    }
+  }, [equipment, isOpen]);
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
+    
     if (!formData.name.trim()) {
       newErrors.name = 'Nome do equipamento é obrigatório';
     } else if (formData.name.trim().length < 3) {
       newErrors.name = 'Nome deve ter pelo menos 3 caracteres';
     }
-
+    
     if (!formData.category) {
       newErrors.category = 'Categoria é obrigatória';
     }
-
+    
     if (formData.serialNumber && formData.serialNumber.length < 3) {
       newErrors.serialNumber = 'Número de série deve ter pelo menos 3 caracteres';
     }
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
+    
+    if (!equipment || !validateForm()) {
       return;
     }
-
+    
     setIsSubmitting(true);
-
+    
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 500));
-
-    onAdd({
-      ...formData,
+    
+    onUpdate({
+      ...equipment,
       name: formData.name.trim(),
+      category: formData.category,
+      status: formData.status,
+      lastMaintenance: formData.lastMaintenance,
       model: formData.model.trim(),
       serialNumber: formData.serialNumber.trim()
     });
-
-    setFormData({
-      name: '',
-      category: '',
-      status: 'working',
-      lastMaintenance: '',
-      model: '',
-      serialNumber: ''
-    });
+    
     setErrors({});
     setIsSubmitting(false);
     onClose();
@@ -93,18 +105,18 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !equipment) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 ease-out scale-100">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Plus className="w-5 h-5 text-orange-600" />
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Edit3 className="w-5 h-5 text-blue-600" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900">
-              Adicionar Equipamento
+              Editar Equipamento
             </h2>
           </div>
           <button
@@ -129,9 +141,9 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
                 if (errors.name) setErrors({...errors, name: ''});
               }}
               className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 transition-colors ${
-                errors.name
-                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                  : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                errors.name 
+                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                  : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
               }`}
               placeholder="Ex: Câmera IP Hikvision"
               disabled={isSubmitting}
@@ -153,9 +165,9 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
                 if (errors.category) setErrors({...errors, category: ''});
               }}
               className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 transition-colors ${
-                errors.category
-                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                  : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                errors.category 
+                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                  : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
               }`}
               disabled={isSubmitting}
               required
@@ -179,7 +191,7 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
             <select
               value={formData.status}
               onChange={(e) => setFormData({...formData, status: e.target.value as Equipment['status']})}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isSubmitting}
             >
               <option value="working">Funcionando</option>
@@ -196,7 +208,7 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
               type="text"
               value={formData.model}
               onChange={(e) => setFormData({...formData, model: e.target.value})}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Ex: DS-2CD2143G0-I"
               disabled={isSubmitting}
             />
@@ -214,9 +226,9 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
                 if (errors.serialNumber) setErrors({...errors, serialNumber: ''});
               }}
               className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 transition-colors ${
-                errors.serialNumber
-                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                  : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                errors.serialNumber 
+                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                  : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
               }`}
               placeholder="Ex: HK003344"
               disabled={isSubmitting}
@@ -234,7 +246,7 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
               type="date"
               value={formData.lastMaintenance}
               onChange={(e) => setFormData({...formData, lastMaintenance: e.target.value})}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isSubmitting}
             />
           </div>
@@ -251,17 +263,17 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:bg-orange-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 font-medium"
+              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 font-medium"
             >
               {isSubmitting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Adicionando...</span>
+                  <span>Salvando...</span>
                 </>
               ) : (
                 <>
-                  <Plus className="w-4 h-4" />
-                  <span>Adicionar</span>
+                  <Edit3 className="w-4 h-4" />
+                  <span>Salvar Alterações</span>
                 </>
               )}
             </button>

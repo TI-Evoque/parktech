@@ -200,8 +200,8 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
               if (activeElements.length > 0) {
                 const dataIndex = activeElements[0].index;
                 const regional = Object.keys(regionalData)[dataIndex];
-                console.log(`Clicked on regional: ${regional}`);
-                // Aqui você pode implementar navegação para detalhes do regional
+                // Implementar navegação para detalhes do regional no futuro
+                // setSelectedRegional(regional);
               }
             }
           }
@@ -343,8 +343,8 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
                 const dataIndex = activeElements[0].index;
                 const statuses = ['working', 'maintenance', 'broken'];
                 const selectedStatus = statuses[dataIndex];
-                console.log(`Clicked on status: ${selectedStatus}`);
-                // Aqui você pode implementar filtro por status
+                // Implementar filtro por status no futuro
+                // setStatusFilter(selectedStatus);
               }
             }
           }
@@ -381,7 +381,7 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Dashboard Geral</h2>
-          <p className="text-slate-600">Visão geral das unidades Academia Evoque</p>
+          <p className="text-slate-600">Visão geral das unidades Evoque Academias</p>
         </div>
         <div className="flex items-center space-x-3">
           <div className="relative">
@@ -526,7 +526,7 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
       <div className="bg-white rounded-xl shadow-lg border border-slate-200">
         <div className="p-6 border-b border-slate-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-slate-900">Unidades Academia Evoque</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Unidades Evoque Academias</h3>
             <div className="text-sm text-slate-500">
               Mostrando {startIndex + 1}-{Math.min(endIndex, units.length)} de {units.length} unidades
             </div>
@@ -595,19 +595,43 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
                 </button>
                 
                 <div className="flex items-center space-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === page
-                          ? 'bg-orange-600 text-white'
-                          : 'text-slate-600 hover:bg-slate-100'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
+                  {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                    let page;
+                    if (totalPages <= 7) {
+                      page = i + 1;
+                    } else if (currentPage <= 4) {
+                      page = i + 1;
+                    } else if (currentPage >= totalPages - 3) {
+                      page = totalPages - 6 + i;
+                    } else {
+                      page = currentPage - 3 + i;
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => goToPage(page)}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${
+                          currentPage === page
+                            ? 'bg-orange-600 text-white shadow-lg'
+                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                  {totalPages > 7 && currentPage < totalPages - 3 && (
+                    <>
+                      <span className="px-2 text-slate-400">...</span>
+                      <button
+                        onClick={() => goToPage(totalPages)}
+                        className="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 transform hover:scale-105"
+                      >
+                        {totalPages}
+                      </button>
+                    </>
+                  )}
                 </div>
                 
                 <button

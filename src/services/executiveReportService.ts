@@ -9,7 +9,7 @@ declare module 'jspdf' {
 }
 
 export class ExecutiveReportService {
-  // Relatório Executivo para CEO
+  // Relat��rio Executivo para CEO
   static generateExecutiveReportPDF(units: AcademyUnit[]): void {
     const doc = new jsPDF();
     
@@ -20,7 +20,7 @@ export class ExecutiveReportService {
     
     doc.setFontSize(16);
     doc.setTextColor(102, 102, 102);
-    doc.text('Academia Evoque - Análise de Equipamentos', 20, 35);
+    doc.text('Evoque Academias - Análise de Equipamentos', 20, 35);
     
     doc.setFontSize(12);
     doc.setTextColor(136, 136, 136);
@@ -278,8 +278,8 @@ export class ExecutiveReportService {
     // Footer executivo
     doc.setFontSize(8);
     doc.setTextColor(156, 163, 175);
-    doc.text('Relatório confidencial - Academia Evoque', 20, 280);
-    doc.text(`Página 1-2 | Gerado pelo Sistema de Gestão Evoque`, 120, 280);
+    doc.text('Relatório confidencial - Evoque Academias', 20, 280);
+    doc.text(`Página 1-2 | Gerado pelo Sistema de Gestão Evoque Academias`, 120, 280);
 
     doc.save('relatorio-executivo-equipamentos-evoque.pdf');
   }
@@ -387,5 +387,126 @@ export class ExecutiveReportService {
     }
 
     doc.save('relatorio-catracas-evoque.pdf');
+  }
+
+  // Relatório de Segurança
+  static generateSecurityReportPDF(units: AcademyUnit[]): void {
+    const doc = new jsPDF();
+
+    // Header
+    doc.setFontSize(24);
+    doc.setTextColor(239, 68, 68);
+    doc.text('RELATÓRIO DE SEGURANÇA', 20, 25);
+
+    doc.setFontSize(16);
+    doc.setTextColor(102, 102, 102);
+    doc.text('Evoque Academias - Análise de Equipamentos de Segurança', 20, 35);
+
+    doc.setFontSize(12);
+    doc.setTextColor(136, 136, 136);
+    doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 20, 45);
+
+    // Análise de equipamentos de segurança
+    const allEquipments = units.flatMap(unit => unit.equipment);
+    const securityEquipments = allEquipments.filter(eq =>
+      eq.category === 'Catracas' ||
+      eq.category.includes('Câmeras') ||
+      eq.category === 'Controle de Acesso' ||
+      eq.category === 'Segurança'
+    );
+
+    const catracas = securityEquipments.filter(eq => eq.category === 'Catracas');
+    const cameras = securityEquipments.filter(eq => eq.category.includes('Câmeras'));
+    const controleAcesso = securityEquipments.filter(eq => eq.category === 'Controle de Acesso');
+
+    const securityWorking = securityEquipments.filter(eq => eq.status === 'working');
+    const securityBroken = securityEquipments.filter(eq => eq.status === 'broken');
+
+    // Métricas principais
+    doc.setFontSize(14);
+    doc.setTextColor(51, 51, 51);
+    doc.text('RESUMO EXECUTIVO DE SEGURANÇA', 20, 65);
+
+    doc.setFontSize(12);
+    doc.text(`Total de Equipamentos de Segurança: ${securityEquipments.length}`, 20, 80);
+    doc.text(`• Catracas: ${catracas.length}`, 25, 90);
+    doc.text(`• Câmeras de Segurança: ${cameras.length}`, 25, 100);
+    doc.text(`• Controle de Acesso: ${controleAcesso.length}`, 25, 110);
+
+    doc.text(`Taxa de Funcionamento: ${((securityWorking.length / securityEquipments.length) * 100).toFixed(1)}%`, 20, 125);
+    doc.text(`Equipamentos com Problemas: ${securityBroken.length}`, 20, 135);
+
+    // Unidades críticas
+    const criticalUnits = units.filter(unit => {
+      const unitSecurity = unit.equipment.filter(eq =>
+        eq.category === 'Catracas' ||
+        eq.category.includes('Câmeras') ||
+        eq.category === 'Controle de Acesso'
+      );
+      const brokenSecurity = unitSecurity.filter(eq => eq.status === 'broken');
+      return brokenSecurity.length > 0;
+    });
+
+    if (criticalUnits.length > 0) {
+      doc.setFontSize(14);
+      doc.setTextColor(239, 68, 68);
+      doc.text('ALERTAS DE SEGURANÇA CRÍTICOS', 20, 155);
+
+      doc.setFontSize(10);
+      doc.setTextColor(51, 51, 51);
+
+      let currentY = 170;
+      criticalUnits.forEach(unit => {
+        const brokenEquipments = unit.equipment.filter(eq =>
+          (eq.category === 'Catracas' ||
+           eq.category.includes('Câmeras') ||
+           eq.category === 'Controle de Acesso') &&
+          eq.status === 'broken'
+        );
+
+        doc.text(`${unit.name}: ${brokenEquipments.length} equipamento(s) com problema`, 25, currentY);
+        currentY += 8;
+
+        brokenEquipments.forEach(eq => {
+          doc.text(`  • ${eq.name} (${eq.category})`, 30, currentY);
+          currentY += 6;
+        });
+        currentY += 2;
+      });
+    }
+
+    // Tabela detalhada
+    const tableData = units.map(unit => {
+      const unitSecurity = unit.equipment.filter(eq =>
+        eq.category === 'Catracas' ||
+        eq.category.includes('Câmeras') ||
+        eq.category === 'Controle de Acesso'
+      );
+      const working = unitSecurity.filter(eq => eq.status === 'working').length;
+      const broken = unitSecurity.filter(eq => eq.status === 'broken').length;
+      const total = unitSecurity.length;
+
+      return [
+        unit.name,
+        total.toString(),
+        working.toString(),
+        broken.toString(),
+        total > 0 ? `${((working / total) * 100).toFixed(0)}%` : 'N/A'
+      ];
+    });
+
+    doc.autoTable({
+      head: [['Unidade', 'Total Seg.', 'Funcionando', 'Problemas', 'Taxa']],
+      body: tableData,
+      startY: Math.max(currentY || 180, 180),
+      theme: 'grid',
+      styles: { fontSize: 8 },
+      headStyles: {
+        fillColor: [239, 68, 68],
+        textColor: [255, 255, 255]
+      }
+    });
+
+    doc.save('relatorio-seguranca-evoque.pdf');
   }
 }
