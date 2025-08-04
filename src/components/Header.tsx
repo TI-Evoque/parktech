@@ -17,7 +17,7 @@ export function Header({ onOpenAdmin, onOpenExecutive }: HeaderProps) {
                 <Activity className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900 tracking-tight">Evoque Tech</h1>
+                <h1 className="text-xl font-bold text-slate-900 tracking-tight">Evoque Academias</h1>
                 <p className="text-sm text-slate-500">Sistema de Gestão de Equipamentos</p>
               </div>
             </div>
