@@ -16,7 +16,7 @@ export class ReportService {
     
     // Título
     doc.setFontSize(20);
-    doc.text('Relatório Geral - Academia Evoque', 20, 20);
+    doc.text('Relatório Geral - Evoque Academias', 20, 20);
     
     // Data
     doc.setFontSize(12);
