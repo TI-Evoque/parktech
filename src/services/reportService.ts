@@ -63,7 +63,7 @@ export class ReportService {
     const doc = new jsPDF();
     
     doc.setFontSize(20);
-    doc.text('Relatório de Equipamentos - Academia Evoque', 20, 20);
+    doc.text('Relatório de Equipamentos - Evoque Academias', 20, 20);
     
     doc.setFontSize(12);
     doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 20, 30);
@@ -89,7 +89,7 @@ export class ReportService {
       doc.text('Nenhum equipamento cadastrado', 20, 50);
     } else {
       doc.autoTable({
-        head: [['Unidade', 'Equipamento', 'Categoria', 'Modelo', 'Série', 'Status', 'Última Manutenção']],
+        head: [['Unidade', 'Equipamento', 'Categoria', 'Modelo', 'Série', 'Status', 'Última Manuten��ão']],
         body: equipmentData,
         startY: 50,
         styles: {
@@ -111,7 +111,7 @@ export class ReportService {
     const doc = new jsPDF();
     
     doc.setFontSize(20);
-    doc.text('Relatório por Regional - Academia Evoque', 20, 20);
+    doc.text('Relatório por Regional - Evoque Academias', 20, 20);
     
     doc.setFontSize(12);
     doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 20, 30);
