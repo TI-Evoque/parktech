@@ -278,8 +278,8 @@ export class ExecutiveReportService {
     // Footer executivo
     doc.setFontSize(8);
     doc.setTextColor(156, 163, 175);
-    doc.text('Relatório confidencial - Academia Evoque', 20, 280);
-    doc.text(`Página 1-2 | Gerado pelo Sistema de Gestão Evoque`, 120, 280);
+    doc.text('Relatório confidencial - Evoque Academias', 20, 280);
+    doc.text(`Página 1-2 | Gerado pelo Sistema de Gestão Evoque Academias`, 120, 280);
 
     doc.save('relatorio-executivo-equipamentos-evoque.pdf');
   }
