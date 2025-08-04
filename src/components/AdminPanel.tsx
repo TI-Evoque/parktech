@@ -167,7 +167,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       try {
         const restoredData = await SupabaseService.restoreBackup(backupId);
         onUpdateUnits(restoredData);
-        alert('Backup restaurado com sucesso!');
+        toast.success('Backup restaurado com sucesso!', 'Todos os dados foram atualizados');
       } catch (error) {
         console.error('Erro ao restaurar backup:', error);
         alert('Erro ao restaurar backup.');
