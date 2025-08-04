@@ -343,8 +343,8 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
                 const dataIndex = activeElements[0].index;
                 const statuses = ['working', 'maintenance', 'broken'];
                 const selectedStatus = statuses[dataIndex];
-                console.log(`Clicked on status: ${selectedStatus}`);
-                // Aqui você pode implementar filtro por status
+                // Implementar filtro por status no futuro
+                // setStatusFilter(selectedStatus);
               }
             }
           }
