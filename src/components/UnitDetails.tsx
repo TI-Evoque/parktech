@@ -399,7 +399,7 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
                         <MoreVertical className="w-4 h-4" />
                       </button>
                       {openMenuId === equipment.id && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-200 z-10">
+                        <div className="equipment-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-200 z-10">
                           <div className="p-1">
                             <button
                               onClick={() => handleEditEquipment(equipment.id)}
