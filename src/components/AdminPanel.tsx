@@ -189,6 +189,11 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
   };
 
   const handleSyncToSupabase = async () => {
+    if (!SupabaseService.isConfigured()) {
+      alert('⚠️ Supabase não configurado. Adicione as variáveis VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no arquivo .env');
+      return;
+    }
+
     setIsLoading(true);
     try {
       await SupabaseService.saveUnits(units);
