@@ -71,6 +71,18 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
     setOpenMenuId(openMenuId === equipmentId ? null : equipmentId);
   };
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openMenuId && !(event.target as Element).closest('.equipment-menu')) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openMenuId]);
+
   useEffect(() => {
     // Cleanup previous charts
     chartInstances.current.forEach(chart => chart.destroy());
