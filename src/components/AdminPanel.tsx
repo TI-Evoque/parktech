@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, Edit, Trash2, Save, X, Download, Upload, FileText, Dat
 import { AcademyUnit } from '../types/academy';
 import { ReportService } from '../services/reportService';
 import { SupabaseService } from '../services/supabase';
+import { useToast, ToastContainer } from './Toast';
 
 interface AdminPanelProps {
   units: AcademyUnit[];
