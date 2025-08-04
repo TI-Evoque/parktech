@@ -3,6 +3,7 @@ import { ArrowLeft, Mail, Phone, User, UserCheck, Clock, Zap, AlertTriangle, Wre
 import Chart from 'chart.js/auto';
 import { AcademyUnit, Equipment } from '../types/academy';
 import { AddEquipmentModal } from './AddEquipmentModal';
+import { EditEquipmentModal } from './EditEquipmentModal';
 import { ConfirmDialog } from './ConfirmDialog';
 
 interface UnitDetailsProps {
@@ -13,8 +14,10 @@ interface UnitDetailsProps {
 
 export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [equipmentToDelete, setEquipmentToDelete] = useState<string | null>(null);
+  const [equipmentToEdit, setEquipmentToEdit] = useState<Equipment | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const categoryChart = useRef<HTMLCanvasElement>(null);
   const statusChart = useRef<HTMLCanvasElement>(null);
@@ -62,9 +65,23 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
   };
 
   const handleEditEquipment = (equipmentId: string) => {
-    // TODO: Implement edit functionality
-    console.log('Edit equipment:', equipmentId);
+    const equipment = unit.equipment.find(eq => eq.id === equipmentId);
+    if (equipment) {
+      setEquipmentToEdit(equipment);
+      setShowEditModal(true);
+    }
     setOpenMenuId(null);
+  };
+
+  const handleUpdateEquipment = (updatedEquipment: Equipment) => {
+    const updatedUnit = {
+      ...unit,
+      equipment: unit.equipment.map(eq =>
+        eq.id === updatedEquipment.id ? updatedEquipment : eq
+      )
+    };
+    onUpdateUnit(updatedUnit);
+    setEquipmentToEdit(null);
   };
 
   const toggleMenu = (equipmentId: string) => {
@@ -431,6 +448,16 @@ export function UnitDetails({ unit, onBack, onUpdateUnit }: UnitDetailsProps) {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         onAdd={handleAddEquipment}
+      />
+
+      <EditEquipmentModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEquipmentToEdit(null);
+        }}
+        onUpdate={handleUpdateEquipment}
+        equipment={equipmentToEdit}
       />
 
       <ConfirmDialog
