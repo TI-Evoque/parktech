@@ -235,6 +235,7 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
               value={formData.lastMaintenance}
               onChange={(e) => setFormData({...formData, lastMaintenance: e.target.value})}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              disabled={isSubmitting}
             />
           </div>
 
