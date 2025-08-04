@@ -17,6 +17,8 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
     model: '',
     serialNumber: ''
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = [
     'Câmeras de Segurança',
