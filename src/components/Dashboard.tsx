@@ -200,8 +200,8 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
               if (activeElements.length > 0) {
                 const dataIndex = activeElements[0].index;
                 const regional = Object.keys(regionalData)[dataIndex];
-                console.log(`Clicked on regional: ${regional}`);
-                // Aqui você pode implementar navegação para detalhes do regional
+                // Implementar navegação para detalhes do regional no futuro
+                // setSelectedRegional(regional);
               }
             }
           }
