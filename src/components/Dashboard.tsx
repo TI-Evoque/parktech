@@ -381,7 +381,7 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Dashboard Geral</h2>
-          <p className="text-slate-600">Visão geral das unidades Academia Evoque</p>
+          <p className="text-slate-600">Visão geral das unidades Evoque Academias</p>
         </div>
         <div className="flex items-center space-x-3">
           <div className="relative">
@@ -526,7 +526,7 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
       <div className="bg-white rounded-xl shadow-lg border border-slate-200">
         <div className="p-6 border-b border-slate-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-slate-900">Unidades Academia Evoque</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Unidades Evoque Academias</h3>
             <div className="text-sm text-slate-500">
               Mostrando {startIndex + 1}-{Math.min(endIndex, units.length)} de {units.length} unidades
             </div>
