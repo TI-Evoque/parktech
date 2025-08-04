@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { ArrowLeft, Plus, Edit, Trash2, Save, X, Download, Upload, FileText, Database, Shield, Cloud, BarChart3, Archive } from 'lucide-react';
 import { AcademyUnit } from '../types/academy';
 import { ReportService } from '../services/reportService';
-import { FirebaseService } from '../services/firebase';
+import { SupabaseService } from '../services/supabase';
 
 interface AdminPanelProps {
   units: AcademyUnit[];
@@ -42,11 +42,11 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       );
       onUpdateUnits(updatedUnits);
       
-      // Salvar no Firebase
+      // Salvar no Supabase
       try {
-        await FirebaseService.updateUnit({ ...units.find(u => u.id === editingUnit)!, ...editForm });
+        await SupabaseService.updateUnit({ ...units.find(u => u.id === editingUnit)!, ...editForm });
       } catch (error) {
-        console.error('Erro ao salvar no Firebase:', error);
+        console.error('Erro ao salvar no Supabase:', error);
       }
       
       setEditingUnit(null);
@@ -64,11 +64,11 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       const updatedUnits = units.filter(unit => unit.id !== unitId);
       onUpdateUnits(updatedUnits);
       
-      // Deletar do Firebase
+      // Deletar do Supabase
       try {
-        await FirebaseService.deleteUnit(unitId);
+        await SupabaseService.deleteUnit(unitId);
       } catch (error) {
-        console.error('Erro ao deletar do Firebase:', error);
+        console.error('Erro ao deletar do Supabase:', error);
       }
     }
   };
@@ -93,11 +93,11 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       const updatedUnits = [...units, newUnit];
       onUpdateUnits(updatedUnits);
       
-      // Salvar no Firebase
+      // Salvar no Supabase
       try {
-        await FirebaseService.updateUnit(newUnit);
+        await SupabaseService.updateUnit(newUnit);
       } catch (error) {
-        console.error('Erro ao salvar no Firebase:', error);
+        console.error('Erro ao salvar no Supabase:', error);
       }
       
       setNewUnitForm({
@@ -137,8 +137,8 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       // Backup local
       ReportService.exportBackupJSON(units);
       
-      // Backup no Firebase
-      await FirebaseService.createBackup();
+      // Backup no Supabase
+      await SupabaseService.createBackup();
       alert('Backup criado com sucesso!');
       
       // Atualizar lista de backups
@@ -152,7 +152,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
 
   const loadBackups = async () => {
     try {
-      const backupList = await FirebaseService.listBackups();
+      const backupList = await SupabaseService.listBackups();
       setBackups(backupList);
     } catch (error) {
       console.error('Erro ao carregar backups:', error);
@@ -163,7 +163,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
     if (confirm('Tem certeza que deseja restaurar este backup? Todos os dados atuais serão substituídos.')) {
       setIsLoading(true);
       try {
-        const restoredData = await FirebaseService.restoreBackup(backupId);
+        const restoredData = await SupabaseService.restoreBackup(backupId);
         onUpdateUnits(restoredData);
         alert('Backup restaurado com sucesso!');
       } catch (error) {
@@ -188,14 +188,30 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
     }
   };
 
-  const handleSyncToFirebase = async () => {
+  const handleSyncToSupabase = async () => {
     setIsLoading(true);
     try {
-      await FirebaseService.saveUnits(units);
-      alert('Dados sincronizados com o Firebase com sucesso!');
+      await SupabaseService.saveUnits(units);
+      alert('Dados sincronizados com o Supabase com sucesso!');
     } catch (error) {
       console.error('Erro ao sincronizar:', error);
-      alert('Erro ao sincronizar com Firebase. Verifique a configuração.');
+      alert('Erro ao sincronizar com Supabase. Verifique a configuração.');
+    }
+    setIsLoading(false);
+  };
+
+  const handleTestConnection = async () => {
+    setIsLoading(true);
+    try {
+      const isConnected = await SupabaseService.testConnection();
+      if (isConnected) {
+        alert('✓ Conexão com Supabase estabelecida com sucesso!');
+      } else {
+        alert('⚠️ Tabelas não encontradas. Execute o SQL de configuração no Supabase.');
+      }
+    } catch (error) {
+      console.error('Erro ao testar conexão:', error);
+      alert('❌ Erro de conexão. Verifique as credenciais do Supabase.');
     }
     setIsLoading(false);
   };
@@ -225,12 +241,20 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
         
         <div className="flex items-center space-x-2">
           <button
-            onClick={handleSyncToFirebase}
+            onClick={handleTestConnection}
+            disabled={isLoading}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2 transition-colors disabled:opacity-50"
+          >
+            <Database className="w-4 h-4" />
+            <span>Testar Conexão</span>
+          </button>
+          <button
+            onClick={handleSyncToSupabase}
             disabled={isLoading}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2 transition-colors disabled:opacity-50"
           >
             <Cloud className="w-4 h-4" />
-            <span>Sincronizar Firebase</span>
+            <span>Sincronizar Supabase</span>
           </button>
         </div>
       </div>
@@ -534,12 +558,12 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
           <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
               <Database className="w-5 h-5 mr-2 text-blue-600" />
-              Backups no Firebase
+              Backups no Supabase
             </h3>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {backups.length === 0 ? (
                 <p className="text-sm text-slate-500 text-center py-4">
-                  Nenhum backup encontrado no Firebase
+                  Nenhum backup encontrado no Supabase
                 </p>
               ) : (
                 backups.map((backup) => (
