@@ -299,7 +299,7 @@ export function ExecutiveDashboard({ units, onBack }: ExecutiveDashboardProps) {
     return () => {
       chartInstances.current.forEach(chart => chart.destroy());
     };
-  }, [filteredUnits, catracasData, securityData, equipmentsByUnit, equipmentosAtivos, equipamentosManutencao, equipmentosQuebrados]);
+  }, [filteredUnits, catracasData, securityData, equipmentsByUnit, equipmentosAtivos, equipamentosManutencao, equipamentosQuebrados]);
 
   const handleGenerateReport = (type: string) => {
     switch (type) {
@@ -568,7 +568,7 @@ export function ExecutiveDashboard({ units, onBack }: ExecutiveDashboardProps) {
                   <h4 className="font-medium text-red-900">{unit.name}</h4>
                   <ul className="text-sm text-red-700 mt-2 space-y-1">
                     {equipamentosProblema.map(eq => (
-                      <li key={eq.id}>• {eq.name} ({eq.category})</li>
+                      <li key={eq.id}>�� {eq.name} ({eq.category})</li>
                     ))}
                   </ul>
                 </div>
