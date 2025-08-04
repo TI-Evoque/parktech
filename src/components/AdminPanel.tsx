@@ -212,7 +212,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
     try {
       const isConnected = await SupabaseService.testConnection();
       if (isConnected) {
-        alert('��� Conexão com Supabase estabelecida com sucesso!');
+        toast.success('Conexão estabelecida!', 'Supabase conectado com sucesso');
       } else {
         alert('⚠️ Tabelas não encontradas. Execute o SQL de configuração no Supabase.');
       }
