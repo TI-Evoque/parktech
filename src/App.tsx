@@ -77,7 +77,7 @@ function App() {
       <Header onOpenAdmin={handleOpenAdmin} onOpenExecutive={handleOpenExecutive} />
       <div className="p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">Sistema de Gestão Evoque</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-4">Sistema de Gestão Evoque Academias</h1>
           <div className="max-w-md">
             <UnitSelector
               units={units}
