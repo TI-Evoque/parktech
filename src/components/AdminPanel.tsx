@@ -141,7 +141,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       
       // Backup no Supabase
       await SupabaseService.createBackup();
-      alert('Backup criado com sucesso!');
+      toast.success('Backup criado com sucesso!', 'O backup foi salvo no Supabase');
       
       // Atualizar lista de backups
       await loadBackups();
