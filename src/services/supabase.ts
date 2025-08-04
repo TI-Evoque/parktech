@@ -5,6 +5,9 @@ import { AcademyUnit } from '../types/academy';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
 
+// Verificar se as credenciais estão configuradas
+const isSupabaseConfigured = supabaseUrl !== 'https://your-project.supabase.co' && supabaseKey !== 'your-anon-key';
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export class SupabaseService {
@@ -144,7 +147,7 @@ export class SupabaseService {
         .single();
 
       if (error || !data) {
-        throw new Error('Backup n��o encontrado');
+        throw new Error('Backup não encontrado');
       }
 
       // Restaurar dados
