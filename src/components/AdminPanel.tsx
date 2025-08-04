@@ -185,7 +185,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
         toast.success('Backup importado com sucesso!', 'Dados carregados do arquivo');
       } catch (error) {
         console.error('Erro ao importar backup:', error);
-        alert('Erro ao importar backup. Verifique o formato do arquivo.');
+        toast.error('Erro ao importar backup', 'Verifique o formato do arquivo JSON');
       }
     }
   };
