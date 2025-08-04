@@ -182,7 +182,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       try {
         const importedData = await ReportService.importBackupJSON(file);
         onUpdateUnits(importedData);
-        alert('Backup importado com sucesso!');
+        toast.success('Backup importado com sucesso!', 'Dados carregados do arquivo');
       } catch (error) {
         console.error('Erro ao importar backup:', error);
         alert('Erro ao importar backup. Verifique o formato do arquivo.');
