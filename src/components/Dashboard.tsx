@@ -595,19 +595,43 @@ export function Dashboard({ units, onSelectUnit }: DashboardProps) {
                 </button>
                 
                 <div className="flex items-center space-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === page
-                          ? 'bg-orange-600 text-white'
-                          : 'text-slate-600 hover:bg-slate-100'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
+                  {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                    let page;
+                    if (totalPages <= 7) {
+                      page = i + 1;
+                    } else if (currentPage <= 4) {
+                      page = i + 1;
+                    } else if (currentPage >= totalPages - 3) {
+                      page = totalPages - 6 + i;
+                    } else {
+                      page = currentPage - 3 + i;
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => goToPage(page)}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${
+                          currentPage === page
+                            ? 'bg-orange-600 text-white shadow-lg'
+                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                  {totalPages > 7 && currentPage < totalPages - 3 && (
+                    <>
+                      <span className="px-2 text-slate-400">...</span>
+                      <button
+                        onClick={() => goToPage(totalPages)}
+                        className="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 transform hover:scale-105"
+                      >
+                        {totalPages}
+                      </button>
+                    </>
+                  )}
                 </div>
                 
                 <button
