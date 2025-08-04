@@ -464,7 +464,7 @@ export function ExecutiveDashboard({ units, onBack }: ExecutiveDashboardProps) {
           </button>
           <div>
             <h2 className="text-3xl font-bold text-slate-900">Dashboard Executivo</h2>
-            <p className="text-slate-600">Análise completa dos equipamentos da rede Academia Evoque</p>
+            <p className="text-slate-600">Análise completa dos equipamentos da rede Evoque Academias</p>
           </div>
         </div>
 
