@@ -199,7 +199,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
     setIsLoading(true);
     try {
       await SupabaseService.saveUnits(units);
-      alert('Dados sincronizados com o Supabase com sucesso!');
+      toast.success('Sincronização completa!', 'Dados enviados para o Supabase com sucesso');
     } catch (error) {
       console.error('Erro ao sincronizar:', error);
       alert('Erro ao sincronizar com Supabase. Verifique a configuração.');
