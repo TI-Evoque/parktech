@@ -180,6 +180,7 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
               value={formData.status}
               onChange={(e) => setFormData({...formData, status: e.target.value as Equipment['status']})}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              disabled={isSubmitting}
             >
               <option value="working">Funcionando</option>
               <option value="maintenance">Manutenção</option>
