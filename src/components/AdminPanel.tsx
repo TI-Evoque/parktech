@@ -202,7 +202,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       toast.success('Sincronização completa!', 'Dados enviados para o Supabase com sucesso');
     } catch (error) {
       console.error('Erro ao sincronizar:', error);
-      alert('Erro ao sincronizar com Supabase. Verifique a configuração.');
+      toast.error('Erro na sincronização', 'Verifique a configuração do Supabase');
     }
     setIsLoading(false);
   };
@@ -212,7 +212,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
     try {
       const isConnected = await SupabaseService.testConnection();
       if (isConnected) {
-        alert('✓ Conexão com Supabase estabelecida com sucesso!');
+        alert('��� Conexão com Supabase estabelecida com sucesso!');
       } else {
         alert('⚠️ Tabelas não encontradas. Execute o SQL de configuração no Supabase.');
       }
