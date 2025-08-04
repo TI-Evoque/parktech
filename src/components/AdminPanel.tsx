@@ -218,7 +218,7 @@ export function AdminPanel({ units, onBack, onUpdateUnits }: AdminPanelProps) {
       }
     } catch (error) {
       console.error('Erro ao testar conexão:', error);
-      alert('❌ Erro de conexão. Verifique as credenciais do Supabase.');
+      toast.error('Erro de conexão', 'Verifique as credenciais do Supabase');
     }
     setIsLoading(false);
   };
