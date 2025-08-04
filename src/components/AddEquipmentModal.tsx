@@ -34,20 +34,63 @@ export function AddEquipmentModal({ isOpen, onClose, onAdd }: AddEquipmentModalP
     'Outros'
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name && formData.category) {
-      onAdd(formData);
-      setFormData({
-        name: '',
-        category: '',
-        status: 'working',
-        lastMaintenance: '',
-        model: '',
-        serialNumber: ''
-      });
-      onClose();
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Nome do equipamento é obrigatório';
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = 'Nome deve ter pelo menos 3 caracteres';
     }
+
+    if (!formData.category) {
+      newErrors.category = 'Categoria é obrigatória';
+    }
+
+    if (formData.serialNumber && formData.serialNumber.length < 3) {
+      newErrors.serialNumber = 'Número de série deve ter pelo menos 3 caracteres';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    onAdd({
+      ...formData,
+      name: formData.name.trim(),
+      model: formData.model.trim(),
+      serialNumber: formData.serialNumber.trim()
+    });
+
+    setFormData({
+      name: '',
+      category: '',
+      status: 'working',
+      lastMaintenance: '',
+      model: '',
+      serialNumber: ''
+    });
+    setErrors({});
+    setIsSubmitting(false);
+    onClose();
+  };
+
+  const handleClose = () => {
+    setErrors({});
+    setIsSubmitting(false);
+    onClose();
   };
 
   if (!isOpen) return null;
